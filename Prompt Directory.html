@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-density="comfortable">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOTHING — Prompt Library</title>
+<style>
+:root{--bg:#0b0b0c;--pn:#121214;--pn2:#18181b;--ln:#26262a;--tx:#f4f4f4;--mu:#8b8b92;--ac:#e0262e;--ac2:#ff4850;--r:3px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px}
+[data-theme=light]{--bg:#f4f4f2;--pn:#fff;--pn2:#efefec;--ln:#d9d9d4;--tx:#111;--mu:#68686e;--ac:#d71921;--ac2:#b3121a}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--tx)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--pn2);border:1px solid var(--ln);border-radius:var(--r);padding:7px 11px;cursor:pointer;min-height:34px}
+button:hover{border-color:var(--mu)}button.pri{background:var(--ac);border-color:var(--ac);color:#fff}button.pri:hover{background:var(--ac2)}
+button.ghost{background:none;border-color:transparent;color:var(--mu)}button.ghost:hover{color:var(--tx)}
+button.dng{color:var(--ac2)}
+:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+input,select,textarea{background:var(--pn);border:1px solid var(--ln);border-radius:var(--r);padding:8px 10px;width:100%}
+textarea{resize:vertical;line-height:1.5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+mark{background:var(--ac);color:#fff;border-radius:2px;padding:0 1px}
+.app{display:grid;grid-template-columns:230px 1fr;height:100%}
+aside{border-right:1px solid var(--ln);padding:16px 10px;overflow:auto;display:flex;flex-direction:column;gap:2px;background:var(--pn)}
+.logo{font-weight:700;letter-spacing:.3em;padding:2px 8px 16px;display:flex;align-items:center;gap:8px}.logo i{width:7px;height:7px;border-radius:50%;background:var(--ac)}
+.sh{color:var(--mu);font-size:12px;padding:14px 8px 4px}
+.nv{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:none;border:0;border-left:2px solid transparent;border-radius:0;padding:6px 8px;min-height:32px}
+.nv span:last-child{color:var(--mu);font-size:12px}.nv.on{border-left-color:var(--ac);background:var(--pn2)}
+.tg{display:flex;flex-wrap:wrap;gap:4px;padding:4px 8px}.chip{font-size:12px;border:1px solid var(--ln);border-radius:var(--r);padding:2px 7px;background:none;min-height:0;color:var(--mu)}.chip.on{border-color:var(--ac);color:var(--tx)}
+.sp{flex:1}.st{font-size:12px;color:var(--mu);padding:8px}.st.bad{color:var(--ac2)}
+main{display:flex;flex-direction:column;min-width:0;height:100%}
+.hd{display:flex;align-items:baseline;gap:10px;padding:16px 20px 8px}.hd h1{font-size:18px;margin:0;font-weight:600}.hd small{color:var(--mu)}
+.mb{display:none}
+.tools{display:flex;gap:8px;padding:6px 20px 14px;flex-wrap:wrap}.sw{position:relative;flex:1 1 260px}.sw input{padding:11px 34px 11px 12px;font-size:15px}.sw button{position:absolute;right:2px;top:3px}
+.tools select{width:auto;min-height:40px}.tools>button{min-height:40px}
+.cols{display:grid;grid-template-columns:minmax(280px,380px) 1fr;flex:1;min-height:0;border-top:1px solid var(--ln)}
+#list{overflow:auto;border-right:1px solid var(--ln)}
+.it{padding:11px 16px;border-bottom:1px solid var(--ln);cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 8px}
+[data-density=compact] .it{padding:6px 14px}[data-density=compact] .it .ds{display:none}
+.it:hover{background:var(--pn)}.it.on{background:var(--pn2);box-shadow:inset 2px 0 var(--ac)}
+.it .t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.it .ds{color:var(--mu);grid-column:1/2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .m{color:var(--mu);font-size:12px;grid-column:1/2}.it button{grid-row:1/4;grid-column:2;align-self:center;font-size:12px}
+.badge{font-size:11px;border:1px solid var(--ln);padding:0 5px;border-radius:2px;color:var(--mu);margin-left:6px}
+#detail{overflow:auto;padding:20px 24px}
+.dh{display:flex;gap:8px;align-items:flex-start}.dh h2{margin:0;font-size:20px;flex:1;overflow-wrap:anywhere}
+.meta{color:var(--mu);font-size:12px;margin:6px 0 14px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.lbl{font-size:12px;color:var(--mu);margin:18px 0 6px;display:flex;justify-content:space-between}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.65;background:var(--pn);border:1px solid var(--ln);border-radius:var(--r);padding:14px;max-width:84ch}
+pre.clip{max-height:260px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 75%,transparent);mask-image:linear-gradient(#000 75%,transparent)}
+pre.neg{border-left:3px solid var(--ac)}
+.empty{color:var(--mu);padding:40px 24px;text-align:center;line-height:1.6}
+#modal:not(:empty){position:fixed;inset:0;background:#000b;display:flex;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;z-index:20}
+.box{background:var(--bg);border:1px solid var(--ln);border-radius:var(--r);width:100%;max-width:680px;padding:20px}.box.big{max-width:1000px}
+.box h2{margin:0 0 12px;font-size:17px}.box label{display:block;margin:10px 0;font-size:12px;color:var(--mu)}.box label>*{margin-top:4px;color:var(--tx)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bar{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.err{color:var(--ac2);display:block;min-height:0}.chk{display:flex!important;align-items:center;gap:6px}.chk input{width:auto;margin:0}
+.cnt{float:right}.hr{border:0;border-top:1px solid var(--ln);margin:16px 0}.box p{color:var(--mu);line-height:1.55;margin:6px 0}
+.li{display:flex;gap:6px;align-items:center;margin:4px 0}.li span{flex:1}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:var(--r);z-index:30;display:none;gap:12px;align-items:center;max-width:92vw}
+#toast.bad{background:var(--ac);color:#fff}#toast button{background:none;color:inherit;border-color:currentColor;min-height:26px;padding:2px 8px}
+kbd{border:1px solid var(--ln);border-radius:2px;padding:0 5px;font-size:12px}
+@media(max-width:860px){.app{grid-template-columns:1fr}
+aside{position:fixed;inset:0 25% 0 0;z-index:10;transform:translateX(-101%)}aside.open{transform:none}
+.mb{display:inline-block}.cols{grid-template-columns:1fr}#list{border:0}#detail{position:fixed;inset:0;background:var(--bg);z-index:9;display:none}#detail.open{display:block}
+.hd,.tools{padding-left:12px;padding-right:12px}.row2{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="seed" type="application/json">null</script>
+<script id="code">
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const fmt=t=>t?new Date(t).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):'never';
+const DCATS=['Swimwear','Streetwear','Clubwear','Casual Fashion','Dresses','Photography & Realism','Lighting & Effects','Body & Pose','Reference Image Rules','Experimental','Uncategorized'];
+const DSET={theme:'dark',density:'comfortable',sort:'mod'};
+const VRE=/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
+let seed=null;try{seed=JSON.parse($('#seed').textContent)}catch(e){}
+const LIB=(seed&&seed.libId)||'main',K='nothing:'+LIB,KB=K+':bak';
+let S,view='all',cat='',tag='',q='',sel=null,modalDirty=null,tm=null,storeOk=true,sideOpen=false;
+
+/* ---------- state & storage ---------- */
+function normP(p){return{id:String(p.id||uid()),title:String(p.title||'Untitled'),desc:String(p.desc||''),body:String(p.body||''),neg:String(p.neg||''),cat:String(p.cat||'Uncategorized'),tags:Array.isArray(p.tags)?[...new Set(p.tags.map(String).filter(Boolean))]:[],fav:!!p.fav,created:+p.created||Date.now(),modified:+p.modified||Date.now(),used:p.used?+p.used:null,notes:String(p.notes||''),ver:+p.ver||1,hist:Array.isArray(p.hist)?p.hist.slice(0,10):[],trashed:p.trashed?+p.trashed:null,demo:!!p.demo}}
+function normS(d){if(!d||!Array.isArray(d.prompts))return null;const s={v:1,prompts:d.prompts.filter(p=>p&&typeof p==='object').map(normP),cats:Array.isArray(d.cats)?[...new Set(d.cats.map(String))]:[...DCATS],settings:Object.assign({},DSET,d.settings||{}),demoDone:!!d.demoDone};
+ if(!s.cats.includes('Uncategorized'))s.cats.push('Uncategorized');s.prompts.forEach(p=>{if(!s.cats.includes(p.cat))s.cats.push(p.cat)});return s}
+function tryParse(raw){try{return normS(JSON.parse(raw))}catch(e){return null}}
+function demos(){const n=Date.now(),d=(t,c,tags,body,neg)=>normP({id:uid(),title:t,desc:'Example — placeholder content, replace or delete.',body,neg,cat:c,tags:['example',...tags],created:n,modified:n,demo:true});
+ return[d('Bikini Prompt','Swimwear',['swim'],'[Placeholder] Rules for the Bikini Prompt go here.\nOutfit: {{OUTFIT_TYPE}}\nReference: {{REFERENCE_IMAGE_1}}','[Placeholder] negative terms'),
+ d('Ripped Fashion Prompt','Streetwear',[],'[Placeholder] Rules for the Ripped Fashion Prompt go here.',''),
+ d('Clubwear Prompt','Clubwear',[],'[Placeholder] Rules for the Clubwear Prompt go here.\nSetting: {{ENVIRONMENT}}',''),
+ d('Casual Outfit Prompt','Casual Fashion',[],'[Placeholder] Rules for the Casual Outfit Prompt go here.',''),
+ d('Phone Realism Prompt','Photography & Realism',['realism'],'[Placeholder] Rules for the Phone Realism Prompt go here.',''),
+ d('Subsurface Illumination Prompt','Lighting & Effects',['light'],'[Placeholder] Rules for the Subsurface Illumination Prompt go here.','')]}
+function load(){let raw=null,bak=null;try{raw=localStorage.getItem(K);bak=localStorage.getItem(KB)}catch(e){storeOk=false}
+ if(raw){const s=tryParse(raw);if(s)return s;try{localStorage.setItem(K+':corrupt',raw)}catch(e){}
+  const b=bak&&tryParse(bak);setTimeout(()=>toast(b?'Saved data was damaged — restored last backup copy.':'Saved data was damaged. A raw copy was kept; import a JSON backup.',1),300);if(b)return b}
+ if(seed&&seed.data){const s=normS(seed.data);if(s)return s}
+ const s=normS({prompts:demos(),cats:DCATS,demoDone:true});return s}
+function setStatus(t,bad){const e=$('#stat');if(e){e.textContent=t;e.className='st'+(bad?' bad':'')}}
+function dirty(){setStatus('Saving…');clearTimeout(tm);tm=setTimeout(flush,350)}
+function flush(){clearTimeout(tm);tm=null;try{const prev=localStorage.getItem(K);localStorage.setItem(K,JSON.stringify(S));if(prev&&tryParse(prev))localStorage.setItem(KB,prev);setStatus('Saved')}catch(e){setStatus('Save failed',1);toast('Save failed — storage unavailable or full. Download a JSON backup now.',1)}}
+addEventListener('pagehide',()=>{if(tm)flush()});
+addEventListener('beforeunload',e=>{if(modalDirty&&modalDirty()){e.preventDefault();e.returnValue=''}});
+
+/* ---------- helpers ---------- */
+const get=id=>S.prompts.find(p=>p.id===id);
+const varsOf=t=>{const o=[];let m;VRE.lastIndex=0;while((m=VRE.exec(t)))if(!o.includes(m[1]))o.push(m[1]);return o};
+const HC=new Map();
+function hay(p){let c=HC.get(p.id);if(!c||c[0]!==p.modified){c=[p.modified,[p.title,p.desc,p.body,p.neg,p.cat,p.tags.join(' ')].join('\n').toLowerCase()];HC.set(p.id,c)}return c[1]}
+const terms=()=>q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+function hl(t,ts){if(!ts.length)return esc(t);const re=new RegExp(ts.map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'gi');let o='',i=0,m;while((m=re.exec(t))){if(!m[0])break;o+=esc(t.slice(i,m.index))+'<mark>'+esc(m[0])+'</mark>';i=m.index+m[0].length}return o+esc(t.slice(i))}
+function items(){const ts=terms();let a=S.prompts.filter(p=>view==='trash'?p.trashed:!p.trashed);
+ if(view==='fav')a=a.filter(p=>p.fav);if(view==='recent')a=a.filter(p=>p.used);if(cat)a=a.filter(p=>p.cat===cat);if(tag)a=a.filter(p=>p.tags.includes(tag));
+ if(ts.length)a=a.filter(p=>{const h=hay(p);return ts.every(t=>h.includes(t))});
+ const so=view==='recent'?'used':S.settings.sort;
+ const f={mod:(x,y)=>y.modified-x.modified,created:(x,y)=>y.created-x.created,used:(x,y)=>(y.used||0)-(x.used||0),alpha:(x,y)=>x.title.localeCompare(y.title),fav:(x,y)=>(y.fav-x.fav)||(y.modified-x.modified)}[so];
+ return a.sort(f)}
+function toast(msg,bad,undo){const t=$('#toast');t.className=bad?'bad':'';t.style.display='flex';t.innerHTML='<span>'+esc(msg)+'</span>'+(undo?'<button data-act="undo">Undo</button>':'');t._u=undo;clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',undo?6000:2200)}
+function fallbackCopy(txt){const a=document.createElement('textarea');a.value=txt;a.style.cssText='position:fixed;opacity:0;top:0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}a.remove();return ok}
+async function copy(txt,label,p){let ok=false;try{await navigator.clipboard.writeText(txt);ok=true}catch(e){ok=fallbackCopy(txt)}
+ if(!ok){toast('Copy failed. Open the prompt and select the text manually.',1);return}
+ toast('Copied '+label);if(p){p.used=Date.now();dirty();renderSide();renderList();if(sel===p.id)renderDetail()}}
+
+/* ---------- rendering ---------- */
+function shell(){$('#app').innerHTML=`<div class="app"><aside id="side"></aside><main>
+<div class="hd"><button class="mb ghost" data-act="menu" aria-label="Open menu">☰</button><h1 id="ttl"></h1><small id="cnt"></small></div>
+<div class="tools"><div class="sw"><input id="q" type="search" placeholder="Search prompts…  ( / )" aria-label="Search prompts" autocomplete="off"><button class="ghost" data-act="clearq" aria-label="Clear search" id="cq" hidden>✕</button></div>
+<select id="fcat" aria-label="Category filter"></select>
+<select id="fsort" aria-label="Sort"><option value="mod">Recently modified</option><option value="created">Recently created</option><option value="used">Recently used</option><option value="alpha">Alphabetical</option><option value="fav">Favorites first</option></select>
+<button class="pri" data-act="new">+ New Prompt</button></div>
+<div class="cols"><div id="list"></div><section id="detail" aria-live="polite"></section></div></main></div><div id="modal"></div><div id="toast" role="status"></div>`}
+function render(){document.documentElement.dataset.theme=S.settings.theme;document.documentElement.dataset.density=S.settings.density;renderSide();renderList();renderDetail()}
+function renderSide(){const live=S.prompts.filter(p=>!p.trashed),cc={},tc={};live.forEach(p=>{cc[p.cat]=(cc[p.cat]||0)+1;p.tags.forEach(t=>tc[t]=(tc[t]||0)+1)});
+ const nv=(v,l,n)=>`<button class="nv${view===v&&!cat&&!tag?' on':''}" data-act="nav" data-v="${v}"><span>${l}</span><span>${n}</span></button>`;
+ $('#side').className=sideOpen?'open':'';
+ $('#side').innerHTML=`<div class="logo">NOTHING<i></i></div>${nv('all','All Prompts',live.length)}${nv('fav','Favorites',live.filter(p=>p.fav).length)}${nv('recent','Recently Used',live.filter(p=>p.used).length)}${nv('trash','Trash',S.prompts.length-live.length)}
+<div class="sh">Categories</div>${S.cats.map(c=>`<button class="nv${cat===c?' on':''}" data-act="nav" data-v="all" data-c="${esc(c)}"><span>${esc(c)}</span><span>${cc[c]||0}</span></button>`).join('')}
+<div class="sh">Tags</div><div class="tg">${Object.keys(tc).sort().map(t=>`<button class="chip${tag===t?' on':''}" data-act="nav" data-v="all" data-t="${esc(t)}">${esc(t)} ${tc[t]}</button>`).join('')||'<span class="st">No tags yet</span>'}</div>
+<div class="sp"></div><div id="stat" class="st">${storeOk?'Saved':'Storage unavailable'}</div><button data-act="settings">Settings &amp; Data</button>`;
+ const fc=$('#fcat');fc.innerHTML='<option value="">All categories</option>'+S.cats.map(c=>`<option${c===cat?' selected':''} value="${esc(c)}">${esc(c)}</option>`).join('');}
+function renderList(){const a=items(),ts=terms(),names={all:'All Prompts',fav:'Favorites',recent:'Recently Used',trash:'Trash'};
+ $('#ttl').textContent=cat||tag&&('#'+tag)||names[view];$('#cnt').textContent=a.length+(a.length===1?' prompt':' prompts');$('#cq').hidden=!q;$('#fsort').value=S.settings.sort;
+ const L=$('#list');
+ if(!a.length){const e={fav:'No favorites yet. Star a prompt to keep it here.',recent:'Nothing used yet. Copying a prompt adds it here.',trash:'Trash is empty.'}[view];
+  L.innerHTML=`<div class="empty">${q||cat||tag?'No prompts match your search or filters.<br><br><button data-act="clearall">Clear search &amp; filters</button>':e||'No prompts yet.<br><br><button class="pri" data-act="new">+ New Prompt</button> <button data-act="demo">Load Demo Prompts</button>'}</div>`;return}
+ L.innerHTML=(view==='trash'?'<div class="empty" style="padding:12px"><button class="dng" data-act="empty">Empty Trash</button></div>':'')+a.map(p=>`<div class="it${p.id===sel?' on':''}" data-act="open" data-id="${p.id}" tabindex="0" role="button"><div class="t">${p.fav?'★ ':''}${hl(p.title,ts)}${p.demo?'<span class="badge">example</span>':''}</div>${view==='trash'?'':`<button data-act="copy" data-w="body" data-id="${p.id}" aria-label="Copy prompt ${esc(p.title)}">Copy</button>`}<div class="ds">${hl(p.desc,ts)}</div><div class="m">${hl(p.cat,ts)}${p.tags.length?' · '+hl(p.tags.map(t=>'#'+t).join(' '),ts):''}</div></div>`).join('')}
+function renderDetail(){const d=$('#detail'),p=sel&&get(sel);if(!p){d.className='';d.innerHTML='<div class="empty">Select a prompt to view it, or press <kbd>/</kbd> to search.</div>';return}
+ d.className='open';const v=varsOf(p.body+'\n'+p.neg),long=p.body.length>900,words=(p.body.trim().match(/\S+/g)||[]).length;
+ d.innerHTML=`<button class="ghost mb" data-act="back">← Back</button><div class="dh"><h2>${esc(p.title)}${p.demo?'<span class="badge">example</span>':''}</h2><button class="ghost" data-act="fav" data-id="${p.id}" aria-label="${p.fav?'Remove from favorites':'Add to favorites'}" aria-pressed="${p.fav}">${p.fav?'★':'☆'}</button></div>
+${p.desc?`<div style="color:var(--mu)">${esc(p.desc)}</div>`:''}
+<div class="meta"><span>${esc(p.cat)}</span>${p.tags.map(t=>'<span>#'+esc(t)+'</span>').join('')}<span>v${p.ver}</span><span>Modified ${fmt(p.modified)}</span><span>Used ${fmt(p.used)}</span></div>
+${p.trashed?`<div class="acts"><button class="pri" data-act="restore" data-id="${p.id}">Restore</button><button class="dng" data-act="purge" data-id="${p.id}">Delete Permanently</button></div>`:
+`<div class="acts"><button class="pri" data-act="copy" data-w="body" data-id="${p.id}">Copy Prompt</button>${p.neg?`<button data-act="copy" data-w="neg" data-id="${p.id}">Copy Negative</button><button data-act="copy" data-w="both" data-id="${p.id}">Copy Both</button>`:''}<button data-act="copy" data-w="title" data-id="${p.id}">Copy Title</button>${v.length?`<button data-act="fill" data-id="${p.id}">Fill Variables (${v.length})</button>`:''}</div>
+<div class="acts"><button data-act="edit" data-id="${p.id}">Edit</button>${p.hist.length?`<button data-act="hist" data-id="${p.id}">History (${p.hist.length})</button>`:''}<button class="dng" data-act="del" data-id="${p.id}">Delete</button></div>`}
+<div class="lbl"><span>Prompt</span><span>${p.body.length} chars · ${words} words</span></div><pre id="pb" class="${long?'clip':''}">${esc(p.body)}</pre>${long?'<div class="acts"><button data-act="expand">Expand / collapse</button></div>':''}
+${p.neg?`<div class="lbl"><span>Negative prompt</span><span>${p.neg.length} chars</span></div><pre class="neg">${esc(p.neg)}</pre>`:''}
+${p.notes?`<div class="lbl"><span>Notes</span></div><pre style="font-family:inherit">${esc(p.notes)}</pre>`:''}`}
+
+/* ---------- modal ---------- */
+function openModal(html,big){$('#modal').innerHTML=`<div class="box${big?' big':''}" role="dialog" aria-modal="true">${html}</div>`;const f=$('#modal').querySelector('input,textarea,button');if(f)f.focus()}
+function closeModal(force){if(!force&&modalDirty&&modalDirty()&&!confirm('Discard unsaved changes?'))return;modalDirty=null;$('#modal').innerHTML=''}
+function editor(id){const p=id?get(id):null,d=p||{title:'',desc:'',body:'',neg:'',cat:'Uncategorized',tags:[],fav:false,notes:''};
+ const cs=S.cats.includes(d.cat)?S.cats:[...S.cats,d.cat];
+ openModal(`<form id="ef" data-id="${id||''}" novalidate><h2>${p?'Edit Prompt':'New Prompt'}</h2>
+<label>Title *<input id="f-title" value="${esc(d.title)}" autocomplete="off"><small class="err" id="e-title"></small></label>
+<label>Description<input id="f-desc" value="${esc(d.desc)}" autocomplete="off"></label>
+<div class="row2"><label>Category<select id="f-cat">${cs.map(c=>`<option${c===d.cat?' selected':''} value="${esc(c)}">${esc(c)}</option>`).join('')}</select></label><label>Tags (comma separated)<input id="f-tags" value="${esc(d.tags.join(', '))}" autocomplete="off"></label></div>
+<label>Prompt * <span class="cnt" id="ecnt"></span><textarea id="f-body" rows="10" spellcheck="false">\n${esc(d.body)}</textarea><small class="err" id="e-body"></small></label>
+<label>Negative prompt (optional)<textarea id="f-neg" rows="3" spellcheck="false">\n${esc(d.neg)}</textarea></label>
+<label>Notes (optional)<textarea id="f-notes" rows="2">\n${esc(d.notes)}</textarea></label>
+<div class="bar"><label class="chk"><input type="checkbox" id="f-fav"${d.fav?' checked':''}> Favorite</label><span class="sp"></span><button type="button" data-act="grow">Expand editor</button><button type="button" data-act="close">Cancel</button><button class="pri" type="submit">${p?'Save Changes':'Save Prompt'}</button></div></form>`,true);
+ $('#f-title').focus();ecount();const snap=()=>JSON.stringify([...['title','desc','cat','tags','body','neg','notes'].map(k=>$('#f-'+k).value),$('#f-fav').checked]);const init=snap();modalDirty=()=>$('#f-title')&&snap()!==init}
+function ecount(){const b=$('#f-body');if(b)$('#ecnt').textContent=b.value.length+' chars · '+((b.value.trim().match(/\S+/g)||[]).length)+' words'}
+function saveForm(){const g=k=>$('#f-'+k).value,title=g('title').trim(),body=g('body');$('#e-title').textContent=title?'':'Title is required.';$('#e-body').textContent=body.trim()?'':'Prompt text is required.';if(!title||!body.trim()){$(!title?'#f-title':'#f-body').focus();return}
+ const id=$('#ef').dataset.id,now=Date.now(),v={title,desc:g('desc').trim(),cat:g('cat'),tags:[...new Set(g('tags').split(',').map(t=>t.trim()).filter(Boolean))],body,neg:g('neg'),notes:g('notes'),fav:$('#f-fav').checked};
+ if(!id){const n=normP(Object.assign({id:uid(),created:now,modified:now},v));S.prompts.push(n);sel=n.id}
+ else{const p=get(id);if(p.body!==v.body||p.neg!==v.neg){p.hist.unshift({t:p.modified,body:p.body,neg:p.neg});p.hist=p.hist.slice(0,10);p.ver++}Object.assign(p,v,{modified:now});sel=id}
+ dirty();closeModal(true);render();toast('Saved')}
+function fillModal(id){const p=get(id),vs=varsOf(p.body);openModal(`<h2>Fill Variables</h2>${vs.map(n=>`<label>${esc(n)}<input data-var="${esc(n)}" autocomplete="off"></label>`).join('')}<div class="lbl"><span>Preview</span></div><pre id="fp"></pre><div class="bar"><button class="pri" data-act="copyfill" data-id="${id}">Copy Filled</button><button data-act="copy" data-w="body" data-id="${id}">Copy Original</button><button data-act="close">Close</button></div>`);fillUpdate(id)}
+function filled(id){const p=get(id),vals={};document.querySelectorAll('[data-var]').forEach(i=>vals[i.dataset.var]=i.value);return p.body.replace(VRE,(m,n)=>vals[n]?vals[n]:m)}
+function fillUpdate(id){$('#fp').textContent=filled(id)}
+function settingsModal(){const st=S.settings,sel_=(k,o)=>`<select data-set="${k}">${o.map(([v,l])=>`<option value="${v}"${st[k]===v?' selected':''}>${l}</option>`).join('')}</select>`;
+ openModal(`<h2>Settings &amp; Data</h2><div class="row2"><label>Appearance${sel_('theme',[['dark','Dark'],['light','Light']])}</label><label>Density${sel_('density',[['comfortable','Comfortable'],['compact','Compact']])}</label></div>
+<label>Default sort${sel_('sort',[['mod','Recently modified'],['created','Recently created'],['used','Recently used'],['alpha','Alphabetical'],['fav','Favorites first']])}</label><button data-act="resetui">Reset appearance</button>
+<hr class="hr"><h2>Categories</h2>${S.cats.map(c=>`<div class="li"><span>${esc(c)}</span>${c==='Uncategorized'?'':`<button data-act="catren" data-c="${esc(c)}">Rename</button><button class="dng" data-act="catdel" data-c="${esc(c)}">Delete</button>`}</div>`).join('')}<div class="li"><input id="newcat" placeholder="New category" aria-label="New category name"><button data-act="catadd">Add</button></div>
+<hr class="hr"><h2>Data</h2><p>Prompts are stored only in this browser (localStorage) for this file. Clearing browser data, switching browsers or moving the file can lose them, so download a JSON backup regularly.</p>
+<div class="bar"><button class="pri" data-act="exportjson">Download Backup (JSON)</button><button data-act="exporthtml">Export Library as HTML</button><button data-act="importpick">Import JSON…</button><button data-act="demo">Load Demo Prompts</button></div><input type="file" id="imp" accept=".json,application/json" hidden>
+<hr class="hr"><p><kbd>/</kbd> or <kbd>Ctrl/Cmd+K</kbd> search · <kbd>Ctrl/Cmd+N</kbd> new prompt · <kbd>Ctrl/Cmd+Enter</kbd> save in editor · <kbd>Esc</kbd> close</p><div class="bar"><span class="sp"></span><button data-act="close">Done</button></div>`)}
+
+/* ---------- export / import ---------- */
+const safeJson=o=>JSON.stringify(o).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+function download(name,text,type){try{const u=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return true}catch(e){toast('Download failed: '+e.message,1);return false}}
+const day=()=>new Date().toISOString().slice(0,10);
+function exportJson(){if(download('nothing-backup-'+day()+'.json',JSON.stringify({app:'NOTHING',exported:Date.now(),...S},null,1),'application/json'))toast('Backup downloaded')}
+function exportHtml(){flush();const c=document.documentElement.cloneNode(true);c.querySelector('#app').innerHTML='';c.querySelector('#seed').textContent=safeJson({libId:'x'+uid(),data:S});
+ if(download('nothing-library-'+day()+'.html','<!DOCTYPE html>\n'+c.outerHTML,'text/html'))toast('HTML library downloaded')}
+function importFile(f){const r=new FileReader();r.onerror=()=>toast('Could not read file.',1);r.onload=()=>{let d;try{d=JSON.parse(r.result)}catch(e){toast('Not a valid JSON file.',1);return}
+ if(Array.isArray(d))d={prompts:d};const bad=!d||!Array.isArray(d.prompts)||d.prompts.some(p=>!p||typeof p.title!=='string'||typeof p.body!=='string');
+ if(bad){toast('This file is not a NOTHING backup (prompts need title and body).',1);return}
+ const n=normS(d),ids=new Set(S.prompts.map(p=>p.id)),dup=n.prompts.filter(p=>ids.has(p.id)).length,nc=n.cats.filter(c=>!S.cats.includes(c)).length;window._imp=n;
+ openModal(`<h2>Import preview</h2><p>${n.prompts.length} prompts, ${n.cats.length} categories (${nc} new). ${dup} share an ID with existing prompts.</p><p><b>Merge</b> keeps everything you have and adds new prompts. A prompt with the same ID and different content is added as a separate copy marked "(imported)"; identical ones are skipped. <b>Replace</b> discards the current library.</p><div class="bar"><button class="pri" data-act="merge">Merge</button><button class="dng" data-act="replace">Replace Library</button><button data-act="close">Cancel</button></div>`)};r.readAsText(f)}
+function doMerge(){const n=window._imp;let add=0;n.prompts.forEach(p=>{const e=get(p.id);if(!e){S.prompts.push(p);add++}else if(e.body!==p.body||e.neg!==p.neg||e.title!==p.title){p.id=uid();p.title+=' (imported)';S.prompts.push(p);add++}});
+ n.cats.forEach(c=>{if(!S.cats.includes(c))S.cats.push(c)});dirty();closeModal(true);render();toast('Merged — '+add+' added')}
+function doReplace(){if(!confirm('Replace your entire library with the imported one? Download a backup first if unsure.'))return;const n=window._imp;n.settings=S.settings;S=n;sel=null;dirty();closeModal(true);render();toast('Library replaced')}
+
+/* ---------- actions ---------- */
+function nav(v,c,t){view=v;cat=c||'';tag=t||'';sel=null;sideOpen=false;render()}
+function trash(id){const p=get(id);p.trashed=Date.now();dirty();sel=null;render();toast('Moved to Trash',0,()=>{p.trashed=null;dirty();render()})}
+const A={
+ nav:e=>nav(e.dataset.v,e.dataset.c,e.dataset.t),
+ open:e=>{sel=e.dataset.id;renderList();renderDetail()},
+ back:()=>{sel=null;renderList();renderDetail()},
+ menu:()=>{sideOpen=!sideOpen;renderSide()},
+ new:()=>editor(),edit:e=>editor(e.dataset.id),
+ close:()=>closeModal(),grow:()=>{const b=$('#f-body');b.rows=b.rows>12?10:28},
+ clearq:()=>{q='';$('#q').value='';renderList();$('#q').focus()},
+ clearall:()=>{q='';cat='';tag='';$('#q').value='';render()},
+ copy:e=>{const p=get(e.dataset.id),w=e.dataset.w;const t={body:p.body,neg:p.neg,title:p.title,both:p.body+'\n\n'+p.neg}[w];copy(t,{body:'prompt',neg:'negative prompt',title:'title',both:'prompt + negative'}[w],w==='title'?null:p)},
+ copyfill:e=>copy(filled(e.dataset.id),'filled prompt',get(e.dataset.id)),
+ fill:e=>fillModal(e.dataset.id),
+ fav:e=>{const p=get(e.dataset.id);p.fav=!p.fav;p.modified=Date.now();dirty();render()},
+ del:e=>trash(e.dataset.id),
+ restore:e=>{get(e.dataset.id).trashed=null;dirty();sel=null;render();toast('Restored')},
+ purge:e=>{if(confirm('Permanently delete this prompt? This cannot be undone.')){S.prompts=S.prompts.filter(p=>p.id!==e.dataset.id);sel=null;dirty();render()}},
+ empty:()=>{const n=S.prompts.filter(p=>p.trashed).length;if(n&&confirm('Permanently delete '+n+' prompt(s) in Trash? This cannot be undone.')){S.prompts=S.prompts.filter(p=>!p.trashed);sel=null;dirty();render()}},
+ expand:()=>$('#pb').classList.toggle('clip'),
+ undo:()=>{const t=$('#toast');if(t._u)t._u();t.style.display='none'},
+ hist:e=>{const p=get(e.dataset.id);openModal(`<h2>Revision history</h2><p>Earlier versions of the prompt text (last 10). Restoring keeps the current text in history.</p>${p.hist.map((h,i)=>`<div class="li"><span>${fmt(h.t)} · ${h.body.length} chars</span><button data-act="rev" data-id="${p.id}" data-i="${i}">Restore</button></div>`).join('')}<div class="bar"><button data-act="close">Close</button></div>`)},
+ rev:e=>{const p=get(e.dataset.id),h=p.hist[+e.dataset.i];p.hist.unshift({t:p.modified,body:p.body,neg:p.neg});p.hist=p.hist.slice(0,10);p.body=h.body;p.neg=h.neg;p.ver++;p.modified=Date.now();dirty();closeModal(true);render();toast('Revision restored')},
+ settings:()=>settingsModal(),
+ resetui:()=>{S.settings=Object.assign({},DSET);dirty();render();settingsModal()},
+ catadd:()=>{const v=$('#newcat').value.trim();if(!v)return;if(S.cats.includes(v)){toast('Category already exists.',1);return}S.cats.push(v);dirty();render();settingsModal()},
+ catren:e=>{const o=e.dataset.c,n=(prompt('Rename category',o)||'').trim();if(!n||n===o)return;if(S.cats.includes(n)){toast('Category already exists.',1);return}S.cats[S.cats.indexOf(o)]=n;S.prompts.forEach(p=>{if(p.cat===o)p.cat=n});if(cat===o)cat=n;dirty();render();settingsModal()},
+ catdel:e=>{const o=e.dataset.c,n=S.prompts.filter(p=>p.cat===o).length;if(!confirm('Delete category "'+o+'"? '+n+' prompt(s) will be moved to Uncategorized.'))return;S.prompts.forEach(p=>{if(p.cat===o)p.cat='Uncategorized'});S.cats=S.cats.filter(c=>c!==o);if(cat===o)cat='';dirty();render();settingsModal()},
+ exportjson:exportJson,exporthtml:exportHtml,importpick:()=>$('#imp').click(),merge:doMerge,replace:doReplace,
+ demo:()=>{demos().forEach(d=>{S.prompts.push(d);if(!S.cats.includes(d.cat))S.cats.push(d.cat)});dirty();closeModal(true);render();toast('Demo prompts added')}
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;if(b.dataset.act==='open'&&e.target.closest('button'))return;const f=A[b.dataset.act];if(f){e.stopPropagation();f(b)}});
+document.addEventListener('submit',e=>{if(e.target.id==='ef'){e.preventDefault();saveForm()}});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='q'){q=t.value;renderList()}else if(t.id==='f-body')ecount();else if(t.dataset.var!==undefined)fillUpdate($('#modal [data-act=copyfill]').dataset.id)});
+document.addEventListener('change',e=>{const t=e.target;if(t.id==='fcat'){cat=t.value;tag='';render()}else if(t.id==='fsort'){S.settings.sort=t.value;dirty();renderList()}else if(t.dataset.set){S.settings[t.dataset.set]=t.value;dirty();render()}else if(t.id==='imp'&&t.files[0]){importFile(t.files[0]);t.value=''}});
+document.addEventListener('keydown',e=>{const k=e.key,mod=e.ctrlKey||e.metaKey,tg=e.target,typing=/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName)||tg.isContentEditable;
+ if(k==='Escape'){if($('#modal').innerHTML){closeModal();e.preventDefault()}else if(sideOpen){sideOpen=false;renderSide()}else if(document.activeElement===$('#q')&&q){A.clearq()}return}
+ if(mod&&k==='Enter'&&$('#ef')){e.preventDefault();saveForm();return}
+ if(mod&&k.toLowerCase()==='k'){e.preventDefault();if(!$('#modal').innerHTML){$('#q').focus();$('#q').select()}return}
+ if(mod&&k.toLowerCase()==='n'){e.preventDefault();if(!$('#modal').innerHTML)editor();return}
+ if(k==='/'&&!typing&&!mod&&!$('#modal').innerHTML){e.preventDefault();$('#q').focus()}
+ if((k==='Enter'||k===' ')&&tg.classList&&tg.classList.contains('it')){e.preventDefault();A.open(tg)}});
+
+/* ---------- init ---------- */
+S=load();shell();render();if(!storeOk)setStatus('Storage unavailable',1);
+if(S.prompts.length&&!tm&&storeOk){try{if(!localStorage.getItem(K))flush()}catch(e){}}
+</script>
+</body>
+</html>
